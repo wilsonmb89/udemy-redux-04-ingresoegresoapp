@@ -21,7 +21,7 @@ export class AuthService {
     private angularFireStore: AngularFirestore
   ) { }
 
-  emitAuthListener() {
+  public emitAuthListener(): void {
     this.angularFireAuth.authState.subscribe(
       firebaseUser => {
         if (!!firebaseUser) {
@@ -34,7 +34,9 @@ export class AuthService {
               }
             );
         } else {
-          this.userSubscription.unsubscribe();
+          if (!!this.userSubscription) {
+            this.userSubscription.unsubscribe();
+          }
           this.store.dispatch(authActions.unSetUser());
         }
       }
