@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { ModalService } from 'src/app/services/modal.service';
+import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import * as uiActions from 'src/app/shared/ngrx/ui.actions';
+import { AppState } from 'src/app/app.reducer';
 
 @Component({
   selector: 'app-register',
@@ -10,11 +14,14 @@ import { ModalService } from 'src/app/services/modal.service';
   styles: [
   ]
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
 
   registerForm: FormGroup;
+  isLoading: boolean;
+  storeUiSubscription: Subscription;
 
   constructor(
+    private store: Store<AppState>,
     private modalService: ModalService,
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -27,21 +34,33 @@ export class RegisterComponent implements OnInit {
       correo: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+    this.storeUiSubscription = this.store.select('ui').subscribe(
+      ui => this.isLoading = ui.isLoading
+    );
+  }
+
+  ngOnDestroy() {
+    if (!!this.storeUiSubscription) {
+      this.storeUiSubscription.unsubscribe();
+    }
   }
 
   public register(): void {
-    this.modalService.showLoadingModal();
+    this.store.dispatch(uiActions.isLoading());
+    // this.modalService.showLoadingModal();
     const { nombre, correo, password } = this.registerForm.value;
     this.authService.registerFirebase(nombre, correo, password)
       .then(
         credential => {
           console.log('Credential:', credential);
-          this.modalService.closeModal();
+          this.store.dispatch(uiActions.stopLoading());
+          // this.modalService.closeModal();
           this.router.navigate(['/dashboard']);
         }
       )
       .catch(
         err => {
+          this.store.dispatch(uiActions.stopLoading());
           this.modalService.showErrorModal('Oops...', err.message);
         }
       );
