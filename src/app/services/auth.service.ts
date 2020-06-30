@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { AppState } from '../app.reducer';
 import * as authActions from '../auth/ngrx/auth.actions';
 import { Subscription } from 'rxjs';
+import * as ingresoEgresoActions from '../ingreso-egreso/ngrx/ingreso-egreso.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,7 @@ export class AuthService {
           if (!!this.userSubscription) {
             this.userSubscription.unsubscribe();
           }
+          this.store.dispatch(ingresoEgresoActions.unSetItems());
           this.store.dispatch(authActions.unSetUser());
         }
       }
@@ -64,4 +66,5 @@ export class AuthService {
       map(firebaseUser => !!firebaseUser)
     );
   }
+
 }

@@ -46,14 +46,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   public login(): void {
     this.store.dispatch(uiActions.isLoading());
-    // this.modalService.showLoadingModal();
     const { correo, password } = this.loginForm.value;
     this.authService.loginFirebase(correo, password)
       .then(
         credential => {
-          console.log('Credential:', credential);
           this.store.dispatch(uiActions.stopLoading());
-          // this.modalService.closeModal();
           this.router.navigate(['/dashboard']);
         }
       )

@@ -47,14 +47,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   public register(): void {
     this.store.dispatch(uiActions.isLoading());
-    // this.modalService.showLoadingModal();
     const { nombre, correo, password } = this.registerForm.value;
     this.authService.registerFirebase(nombre, correo, password)
       .then(
         credential => {
-          console.log('Credential:', credential);
           this.store.dispatch(uiActions.stopLoading());
-          // this.modalService.closeModal();
           this.router.navigate(['/dashboard']);
         }
       )

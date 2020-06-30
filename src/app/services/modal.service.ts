@@ -22,7 +22,15 @@ export class ModalService {
     );
   }
 
-  showErrorModal(title?: string, message?: string) {
+  public showSuccessModal(title?: string, message?: string): void {
+    Swal.fire({
+      icon: 'success',
+      title: title || 'Exito!',
+      text: message || 'Operación realizada satisfactoriamente'
+    });
+  }
+
+  public showErrorModal(title?: string, message?: string): void {
     Swal.fire({
       icon: 'error',
       title: title || 'Oops...',
@@ -30,7 +38,7 @@ export class ModalService {
     });
   }
 
-  showLoadingModal(): void {
+  public showLoadingModal(): void {
     Swal.fire({
       title: 'Por favor espere...',
       onBeforeOpen: () => {
