@@ -11,6 +11,6 @@ export interface AppState {
 
 export const appReducers: ActionReducerMap<AppState> = {
   ui: ui.uiReducer,
-  userData: auth.counterReducer,
+  userData: auth.authReducer,
   ingresoEgresos: ingresoEgreso.ingresoEgresoReducer
 };
